@@ -46,11 +46,11 @@ joinedData <- sessionCounts_monthly %>%
 
 # 1. Calculate Month-over-Month Metrics
 # We first need to determine the most recent two months in the data
-latest_month <- max(sessionCounts_monthly$month)
-second_latest_month <- max(sessionCounts_monthly$month[sessionCounts_monthly$month < latest_month])
+latest_month <- max(joinedData$month)
+second_latest_month <- max(joinedData$month[joinedData$month < latest_month])
 
 # Filter data for these two months and calculate differences
-mom_comparison <- sessionCounts_monthly %>%
+mom_comparison <- joinedData %>%
   filter(month %in% c(latest_month, second_latest_month)) %>%
   arrange(month) %>%
   mutate(
@@ -64,14 +64,17 @@ mom_comparison <- sessionCounts_monthly %>%
     transactions_abs_diff = transactions - transactions_previous,
     transactions_rel_diff = (transactions - transactions_previous) / transactions_previous,
     quantity_abs_diff = quantity - quantity_previous,
-    quantity_rel_diff = (quantity - quantity_previous) / quantity_previous
+    quantity_rel_diff = (quantity - quantity_previous) / quantity_previous,
+    addsToCart_previous = lag(addsToCart),
+    addsToCart_abs_diff = addsToCart - addsToCart_previous,
+    addsToCart_rel_diff = (addsToCart - addsToCart_previous) / addsToCart_previous
   ) %>%
-  select(-c(sessions_previous, transactions_previous, quantity_previous)) # Optionally remove the 'previous' columns
+  select(-c(sessions_previous, transactions_previous, quantity_previous, addsToCart_previous)) # Optionally remove the 'previous' columns
 
 # 2. Merge with addsToCart Data
 # Assuming addsToCart contains a 'addsToCart' column for each month
 mom_comparison <- mom_comparison %>%
-  left_join(select(addsToCart, month, addsToCart), by = "month")
+  left_join(select(addsToCart, month), by = "month")
 
 # 3. Additional Calculations
 # Example: Conversion Rate
