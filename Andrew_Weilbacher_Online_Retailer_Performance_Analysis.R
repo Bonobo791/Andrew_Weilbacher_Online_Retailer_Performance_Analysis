@@ -72,12 +72,10 @@ mom_comparison <- joinedData %>%
   select(-c(sessions_previous, transactions_previous, quantity_previous, addsToCart_previous)) # Optionally remove the 'previous' columns
 
 # 2. Merge with addsToCart Data
-# Assuming addsToCart contains a 'addsToCart' column for each month
 mom_comparison <- mom_comparison %>%
   left_join(select(addsToCart, month), by = "month")
 
 # 3. Additional Calculations
-# Example: Conversion Rate
 mom_comparison <- mom_comparison %>%
   mutate(conversion_rate = transactions / sessions,
          conversion_rate_diff = conversion_rate - lag(conversion_rate))
@@ -121,7 +119,6 @@ ggplot(df, aes(x = dim_deviceCategory, y = transactions, fill = dim_deviceCatego
        x="Device Category",
        y="Number of Transactions")
 
-# Ensure that dim_date is a Date object
 df$sess_date <- mdy(df$sess_date)
 
 # Time Series Plot
@@ -141,7 +138,7 @@ df_cleaned <- na.omit(df)
 # View the cleaned dataframe
 print(df_cleaned)
 
-# Calculate average ecr by device category
+# Calculate average ECR by device category
 df_avg_ecr <- df_cleaned %>%
   group_by(dim_deviceCategory) %>%
   summarise(avg_ecr = mean(ecr))
@@ -156,7 +153,7 @@ ggplot(df_avg_ecr, aes(x = dim_deviceCategory, y = avg_ecr, fill = dim_deviceCat
   labs(title = "Average ECR by Device Category",
        x = "Device Category",
        y = "Average ECR") +
-  scale_fill_brewer(palette = "Set1") # optional, for better color distinction
+  scale_fill_brewer(palette = "Set1")
 
 ### Time Series Plot of Original Worksheet Data ###
 
@@ -176,7 +173,7 @@ ggplot(worksheet1, aes(x = month, y = Transactions, group = dim_deviceCategory, 
   labs(title = "Number of Transactions by Device Category by Month",
        x = "Month",
        y = "Number of Transactions") +
-  scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") # Format x-axis labels
+  scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") 
 
 # Plot Number of Transactions by Month
 ggplot(sessionCounts_monthly, aes(x = month, y = transactions)) +
@@ -185,7 +182,7 @@ ggplot(sessionCounts_monthly, aes(x = month, y = transactions)) +
   labs(title = "Number of Transactions by Month",
        x = "Month",
        y = "Number of Transactions") +
-  scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") # Format x-axis labels
+  scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") 
 
 # Plot ECR by Device Category by Month
 ggplot(worksheet1, aes(x = month, y = ECR, group = dim_deviceCategory, color = dim_deviceCategory)) +
@@ -194,7 +191,7 @@ ggplot(worksheet1, aes(x = month, y = ECR, group = dim_deviceCategory, color = d
   labs(title = "ECR by Device Category by Month",
        x = "Month",
        y = "ECR") +
-  scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") # Format x-axis labels
+  scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") 
 
 ### Times Series for Add to Cart Data ###
 
@@ -209,7 +206,7 @@ ggplot(addsToCart, aes(x = month, y = addsToCart)) +
   labs(title = "Number of addsToCart by Device Category by Month",
        x = "Month",
        y = "Number of addsToCart") +
-  scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") # Format x-axis labels
+  scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") 
 
 ### Analysis of Combined Data Sets ###
 
